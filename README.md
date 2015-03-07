@@ -1,1 +1,1 @@
-# Euler-Maclaurin-Sum
+# Euler Maclaurin Sum
