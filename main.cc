@@ -10,16 +10,17 @@
 // chooses when to stop stage 1 and begin stage 2
 int endStage1(mpfr_t sigma, mpfr_t t, int N, int precision);
 // chooses the number of bits to use in stage1 and stage 2
-int numOfBits(mpfr_t sigma, double epsilon, int N, int M1, int mpfr_bits);
+int numOfBits(mpfr_t sigma, mpfr_t epsilon, int N, int M1, int mpfr_bits);
 
 int main(int argc, char * argv[]) {
     string sigma_string = "";
     string t_string = "";
+    string epsilon_string = "";
 
-    mpfr_t t, sigma; // s = sigma + it
+    mpfr_t t, sigma, epsilon; // s = sigma + it
     double td,sigmad; // double versions of sigma and t
     double Nd,Md; // double versions of N and M
-    double epsilon; // bound on roundoff error
+    double epsilond; // bound on roundoff error
     bool stage1 = 0;
 	bool stage2 = 0;
 
@@ -50,7 +51,8 @@ int main(int argc, char * argv[]) {
                 td = (double)atof(optarg);
                 break;
             case EPSILON:
-                epsilon = (double)atof(optarg);
+                epsilon_string = optarg;
+                epsilond = (double)atof(optarg);
                 break;
             case STAGE1:
                 stage1 = 1;
@@ -69,10 +71,12 @@ int main(int argc, char * argv[]) {
 
     mpfr_init2(t, mpfr_bits);
 	mpfr_init2(sigma, mpfr_bits);
+    mpfr_init2(epsilon, mpfr_bits);
 
 	// set mpz and mpfr variable to supplied values
 	mpfr_set_str(sigma, sigma_string.c_str(), 10, GMP_RNDN);
 	mpfr_set_str(t, t_string.c_str(), 10, GMP_RNDN);
+    mpfr_set_str(epsilon, epsilon_string.c_str(), 10, GMP_RNDN);
 
 	// sum_{n=N}^{N+M-1} n^(-s) = r_result + i*i_result
 	mpfr_t rresult, iresult;
@@ -87,10 +91,10 @@ int main(int argc, char * argv[]) {
     int M1 = endStage1(sigma, t, N, mpfr_bits);
 	// mpfr_bits = numOfBits(sigma, epsilon, N, M1, mpfr_bits);
 
-	cout << "L1=" << L1 << endl;
-	cout << "M1=" << M1 << endl;
-	cout << "N=" << N << endl;
-	cout << "mpfr_bits = " << mpfr_bits << endl;
+	//cout << "L1=" << L1 << endl;
+	//cout << "M1=" << M1 << endl;
+	//cout << "N=" << N << endl;
+	//cout << "mpfr_bits = " << mpfr_bits << endl;
 
     if (stage1) {
         partial_sum_mpfr(sigma, t, M1, rresult, iresult, mpfr_bits);
@@ -102,13 +106,14 @@ int main(int argc, char * argv[]) {
 	
     cout << endl;
     mpfr_out_str(stdout, 10, mpfr_bits, rresult, GMP_RNDN);
-    cout << "          ";
+    cout << "            ";
     mpfr_out_str(stdout, 10, mpfr_bits, iresult, GMP_RNDN);
     cout << endl;
 
     //clear mpfr variables
     mpfr_clear(t);
     mpfr_clear(sigma);
+    mpfr_clear(epsilon);
 
     return 0;
 }
@@ -140,7 +145,7 @@ int endStage1(mpfr_t sigma, mpfr_t t, int N, int mpfr_bits) {
     return M1;
 }
 
-int numOfBits(mpfr_t sigma, double epsilon, int N, int M1, int mpfr_bits) {
+int numOfBits(mpfr_t sigma, mpfr_t epsilon, int N, int M1, int mpfr_bits) {
 	/*
 		We use the following formula for the number of bits to use:
 		             _                                                                _ 
@@ -151,7 +156,7 @@ int numOfBits(mpfr_t sigma, double epsilon, int N, int M1, int mpfr_bits) {
 	mpfr_init2(counter, mpfr_bits);
 	mpfr_init2(counter2, mpfr_bits);
 	mpfr_init2(negSigma, mpfr_bits);
-	mpfr_set_d(bits, epsilon, GMP_RNDN);
+	mpfr_set(bits, epsilon, GMP_RNDN);
 	mpfr_set_ui(counter, 0, GMP_RNDN);
 	mpfr_set_ui(counter2, 0, GMP_RNDN);
 	mpfr_set(negSigma, sigma, GMP_RNDN);

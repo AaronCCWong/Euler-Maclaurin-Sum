@@ -10,15 +10,16 @@ using namespace std;
 int EMSum()
 {
 	int mpfr_bits(100);
-	double epsilon(.0000001);
 	// initialize and set mpfr variables
-	mpfr_t sigma, t, rresult, iresult;
+	mpfr_t sigma, t, rresult, iresult, epsilon;
 	mpfr_init2(sigma, mpfr_bits);
 	mpfr_init2(t, mpfr_bits);
+    mpfr_init2(epsilon, mpfr_bits);
 	mpfr_init2(rresult, mpfr_bits);
 	mpfr_init2(iresult, mpfr_bits);
 	mpfr_set_d(sigma, 0.5, GMP_RNDN);
 	mpfr_set_d(t, 1000000, GMP_RNDN);
+    mpfr_set_d(epsilon, 1E-20, GMP_RNDN);
 	mpfr_set_d(rresult, 0, GMP_RNDN);
 	mpfr_set_d(iresult, 0, GMP_RNDN);
 

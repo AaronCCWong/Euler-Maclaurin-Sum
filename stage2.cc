@@ -7,14 +7,14 @@ using namespace std;
 
 int numOfPartitions(int M1, int N);
 int endPartition(int N, int v, int M1);
-int numOfTerms(mpfr_t sigma, mpfr_t t, double epsilon, int v, int M1, int N, int mpfr_bits);
+int numOfTerms(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, int v, int M1, int N, int mpfr_bits);
 // Calculates the coefficients of the real part of our taylor expansion
 void coefficientRealCalculator(mpfr_t sigma, int v, mpfr_t *coefficientImagValues,
 														int numOfTerms, int mpfr_bits);
 // Calculates the coefficients of the imaginary part of our taylor expansion
 void coefficientImagCalculator(mpfr_t t, int v, mpfr_t *coefficientImagValues, 
 														int numOfTerms, int mpfr_bits);
-void taylorSeries(mpfr_t sigma, mpfr_t t, int v, int k, double epsilon, int M1, int N, int numOfTerms,
+void taylorSeries(mpfr_t sigma, mpfr_t t, int v, int k, int M1, int N, int numOfTerms,
 					mpfr_t realTaylorSeries, mpfr_t imagTaylorSeries, 
 					mpfr_t *coefficientRealValues, mpfr_t *coefficientImagValues, int mpfr_bits);
 void sumTerms(mpfr_t sigma, mpfr_t t, int v, int K, mpfr_t realTaylorSeries, mpfr_t imagTaylorSeries,
@@ -43,7 +43,7 @@ int stage2() {
 	mpfr_set_ui(imagTaylorSeries, 0, GMP_RNDN);
 
 
-	partialSum2MPFR(sigma, t, M1, N, rresult, iresult, epsilon, mpfr_bits);
+	//partialSum2MPFR(sigma, t, M1, N, rresult, iresult, epsilon, mpfr_bits);
 	
 	/*
 	int v = M1;
@@ -72,7 +72,7 @@ int numOfPartitions(int M1, int N) {
 	return R;
 }
 
-int numOfTerms(mpfr_t sigma, mpfr_t t, double epsilon, int v, int M1, int N, int mpfr_bits) {
+int numOfTerms(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, int v, int M1, int N, int mpfr_bits) {
 	int R = numOfPartitions(M1, N);
     //cout << "R=" << R << endl;
 	int K = endPartition(N, v, M1) - v + 1;
@@ -81,7 +81,7 @@ int numOfTerms(mpfr_t sigma, mpfr_t t, double epsilon, int v, int M1, int N, int
 	mpfr_init2(counter, mpfr_bits);
 	mpfr_init2(counter2, mpfr_bits);
 	mpfr_init2(counter3, mpfr_bits);
-	mpfr_set_d(counter, epsilon, GMP_RNDN);
+	mpfr_set(counter, epsilon, GMP_RNDN);
 	mpfr_set(counter2, sigma, GMP_RNDN);
 	mpfr_set(counter3, t, GMP_RNDN);
 	/*
@@ -211,7 +211,7 @@ void coefficientImagCalculator(mpfr_t t, int v, mpfr_t *coefficientImagValues,
 	mpfr_clear(Vmpfr);
 }
 
-void taylorSeries(mpfr_t sigma, mpfr_t t, int v, int k, double epsilon, int M1, int N, int numOfTerms,
+void taylorSeries(mpfr_t sigma, mpfr_t t, int v, int k, int M1, int N, int numOfTerms,
 					mpfr_t realTaylorSeries, mpfr_t imagTaylorSeries, 
 					mpfr_t *coefficientRealValues, mpfr_t *coefficientImagValues, int mpfr_bits) {
 	// initialize mpfr variables
@@ -291,7 +291,7 @@ void sumTerms(mpfr_t sigma, mpfr_t t, int v, int K, mpfr_t realTaylorSeries,
 }
 
 void partialSum2MPFR(mpfr_t sigma, mpfr_t t, int M1, int N, mpfr_t rresult, 
-									mpfr_t iresult, double epsilon, int mpfr_bits) {
+									mpfr_t iresult, mpfr_t epsilon, int mpfr_bits) {
 	int v = M1; // initial starting point of stage2
 	// initialize counters for calculations
 	mpfr_t counter, counter2, counter3, counter4, counter5, counter6;
@@ -375,7 +375,7 @@ void partialSum2MPFR(mpfr_t sigma, mpfr_t t, int M1, int N, mpfr_t rresult,
 			mpfr_set_ui(imagTaylorSeries, 0, GMP_RNDN);
 			mpfr_set_ui(realTerm, 0, GMP_RNDN);
 			mpfr_set_ui(imagTerm, 0, GMP_RNDN);
-			taylorSeries(sigma, t, v, k, epsilon, M1, N, numberOfTerms, realTaylorSeries, imagTaylorSeries, 
+			taylorSeries(sigma, t, v, k, M1, N, numberOfTerms, realTaylorSeries, imagTaylorSeries,
 											coefficientRealValues, coefficientImagValues, mpfr_bits);
             
             sumTerms(sigma, t, v, k, realTaylorSeries, imagTaylorSeries, realTerm, imagTerm, mpfr_bits);
