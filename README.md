@@ -1,4 +1,13 @@
 # Euler Maclaurin Sum
 Calculates the Riemann Zeta Function with arbitrary precison. 
 
-EulerMacSum.cc has a bug. 
+Use 
+
+g++ main.cc EulerMacSum.cc Inequalities.cc stage1.cc stage2.cc -o main -lgmp -lmpfr
+
+to compile in terminal. s = sigma + i * t Use
+
+./main --sigma 0.5 --t 1E6 --epsilon 1E-20 --stage1 --stage2
+
+to run where values for sigma, t, and epsilon can be any value. 
+These commands will change when the program is made more efficient and userfriendly. 
