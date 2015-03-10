@@ -87,13 +87,14 @@ int main(int argc, char * argv[]) {
     int M1 = endStage1(sigma, t, N, mpfr_bits);
 	// mpfr_bits = numOfBits(sigma, epsilon, N, M1, mpfr_bits);
 
+	cout << "L1=" << L1 << endl;
 	cout << "M1=" << M1 << endl;
 	cout << "N=" << N << endl;
 	cout << "mpfr_bits = " << mpfr_bits << endl;
 
     if (stage1) {
         partial_sum_mpfr(sigma, t, M1, rresult, iresult, mpfr_bits);
-        EMsum(sigma, t, M1, L1, rresult, iresult, mpfr_bits);
+		EMsum(sigma, t, N, L1, rresult, iresult, mpfr_bits);
     } 
 	if (stage2) {
 		partialSum2MPFR(sigma, t, M1, N, rresult, iresult, epsilon, mpfr_bits);
