@@ -5,7 +5,6 @@
 // to within eps_rnd in roundoff error.
 
 #include "stage1.h"
-#include <cmath>
 
 // chooses when to stop stage 1 and begin stage 2
 int endStage1(mpfr_t sigma, mpfr_t t, int N, int precision);
@@ -20,7 +19,6 @@ int main(int argc, char * argv[]) {
     mpfr_t t, sigma, epsilon; // s = sigma + it
     double td,sigmad; // double versions of sigma and t
     double Nd,Md; // double versions of N and M
-    double epsilond; // bound on roundoff error
     bool stage1 = 0;
 	bool stage2 = 0;
 
@@ -52,7 +50,6 @@ int main(int argc, char * argv[]) {
                 break;
             case EPSILON:
                 epsilon_string = optarg;
-                epsilond = (double)atof(optarg);
                 break;
             case STAGE1:
                 stage1 = 1;
@@ -67,7 +64,7 @@ int main(int argc, char * argv[]) {
 	// double mm1 = max(pow(Nd, -sigmad), pow(Nd + Md - 1, -sigmad));
 	// double mm2 = (abs(td) + abs(sigmad))*log(Nd + Md);
 	// precision = ceil(-log(eps_rnd / (2 * Md*mm1*mm2)) / log(2.));
-    int mpfr_bits = 300;
+    int mpfr_bits = 500;
 
     mpfr_init2(t, mpfr_bits);
 	mpfr_init2(sigma, mpfr_bits);
@@ -90,11 +87,6 @@ int main(int argc, char * argv[]) {
     int N = inequalityOfN(sigma, t, L1, mpfr_bits);
     int M1 = endStage1(sigma, t, N, mpfr_bits);
 	// mpfr_bits = numOfBits(sigma, epsilon, N, M1, mpfr_bits);
-
-	//cout << "L1=" << L1 << endl;
-	//cout << "M1=" << M1 << endl;
-	//cout << "N=" << N << endl;
-	//cout << "mpfr_bits = " << mpfr_bits << endl;
 
     if (stage1) {
         partial_sum_mpfr(sigma, t, M1, rresult, iresult, mpfr_bits);

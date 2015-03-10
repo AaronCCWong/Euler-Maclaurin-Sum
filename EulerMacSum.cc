@@ -9,7 +9,7 @@ using namespace std;
 
 int EMSum()
 {
-	int mpfr_bits(100);
+	int mpfr_bits(300);
 	// initialize and set mpfr variables
 	mpfr_t sigma, t, rresult, iresult, epsilon;
 	mpfr_init2(sigma, mpfr_bits);
@@ -19,7 +19,7 @@ int EMSum()
 	mpfr_init2(iresult, mpfr_bits);
 	mpfr_set_d(sigma, 0.5, GMP_RNDN);
 	mpfr_set_d(t, 1000000, GMP_RNDN);
-    mpfr_set_d(epsilon, 1E-20, GMP_RNDN);
+    mpfr_set_d(epsilon, 1E-80, GMP_RNDN);
 	mpfr_set_d(rresult, 0, GMP_RNDN);
 	mpfr_set_d(iresult, 0, GMP_RNDN);
 
@@ -48,6 +48,7 @@ int EMSum()
 	mpfr_clear(t);
 	mpfr_clear(rresult);
 	mpfr_clear(iresult);
+	mpfr_clear(epsilon);
 
 	return 0;
 }
@@ -93,7 +94,6 @@ void EMsum(mpfr_t sigma, mpfr_t t, int N, int L1, mpfr_t rresult, mpfr_t iresult
 	mpfr_set_ui(Nmpfr, N, GMP_RNDN);
 	mpfr_set_ui(L1mpfr, L1, GMP_RNDN);
 	mpfr_set_si(l1, 1, GMP_RNDN);
-
 
 	// (N^(-s))/2
 	mpfr_log(token, Nmpfr, GMP_RNDN); // log(N)

@@ -14,54 +14,41 @@ void coefficientRealCalculator(mpfr_t sigma, int v, mpfr_t *coefficientImagValue
 // Calculates the coefficients of the imaginary part of our taylor expansion
 void coefficientImagCalculator(mpfr_t t, int v, mpfr_t *coefficientImagValues, 
 														int numOfTerms, int mpfr_bits);
-void taylorSeries(mpfr_t sigma, mpfr_t t, int v, int k, int M1, int N, int numOfTerms,
+void taylorSeries(mpfr_t sigma, mpfr_t t, int k, int numOfTerms,
 					mpfr_t realTaylorSeries, mpfr_t imagTaylorSeries, 
 					mpfr_t *coefficientRealValues, mpfr_t *coefficientImagValues, int mpfr_bits);
-void sumTerms(mpfr_t sigma, mpfr_t t, int v, int K, mpfr_t realTaylorSeries, mpfr_t imagTaylorSeries,
+void sumTerms(mpfr_t sigma, mpfr_t t, mpfr_t realTaylorSeries, mpfr_t imagTaylorSeries,
 				mpfr_t realTerm, mpfr_t imagTerm, int mpfr_bits);
 
 int stage2() {
-	double epsilon = 0.00001;
 	int mpfr_bits, M1, N;
 	mpfr_bits = 300;
 	M1 = 201;
 	N = 432628;
 
 	// initialize mpfr_t variables
-	mpfr_t sigma, t, rresult, iresult, realTaylorSeries, imagTaylorSeries;
+	mpfr_t sigma, t, epsilon, rresult, iresult, realTaylorSeries, imagTaylorSeries;
 	mpfr_init2(sigma, mpfr_bits);
 	mpfr_init2(t, mpfr_bits);
+	mpfr_init2(epsilon, mpfr_bits);
 	mpfr_init2(rresult, mpfr_bits);
 	mpfr_init2(iresult, mpfr_bits);
 	mpfr_init2(realTaylorSeries, mpfr_bits);
 	mpfr_init2(imagTaylorSeries, mpfr_bits);
 	mpfr_set_d(sigma, 0.5, GMP_RNDN);
 	mpfr_set_d(t, 1000000, GMP_RNDN);
+	mpfr_set_d(epsilon, 1E-80, GMP_RNDN);
 	mpfr_set_ui(rresult, 0, GMP_RNDN);
 	mpfr_set_ui(iresult, 0, GMP_RNDN);
 	mpfr_set_ui(realTaylorSeries, 0, GMP_RNDN);
 	mpfr_set_ui(imagTaylorSeries, 0, GMP_RNDN);
 
-
-	//partialSum2MPFR(sigma, t, M1, N, rresult, iresult, epsilon, mpfr_bits);
-	
-	/*
-	int v = M1;
-	mpfr_t *coefficientRealValues;
-	mpfr_t *coefficientImagValues;
-	coefficientRealValues = new mpfr_t[numOfTerms(sigma, t, epsilon, v, M1, N, mpfr_bits)];
-	coefficientImagValues = new mpfr_t[numOfTerms(sigma, t, epsilon, v, M1, N, mpfr_bits)];
-	coefficientRealCalculator(sigma, v, coefficientRealValues,
-		numOfTerms(sigma, t, epsilon, v, M1, N, mpfr_bits), mpfr_bits);
-	coefficientImagCalculator(t, v, coefficientImagValues,
-		numOfTerms(sigma, t, epsilon, v, M1, N, mpfr_bits), mpfr_bits);
-	taylorSeries(sigma, t, M1, 1, epsilon, M1, N, realTaylorSeries, imagTaylorSeries,
-									coefficientRealValues, coefficientImagValues, mpfr_bits);
-									*/
+	partialSum2MPFR(sigma, t, M1, N, rresult, iresult, epsilon, mpfr_bits);
 
 	// clear mpfr_t variables
 	mpfr_clear(sigma);
 	mpfr_clear(t);
+	mpfr_clear(epsilon);
 	mpfr_clear(rresult);
 	mpfr_clear(iresult);
 	return 0;
@@ -97,9 +84,7 @@ int numOfTerms(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, int v, int M1, int N, int
 	mpfr_add_ui(counter2, counter2, 1, GMP_RNDN);
 	mpfr_div(counter, counter, counter2, GMP_RNDN);
 	mpfr_log(counter, counter, GMP_RNDN); // log(epsilon / (2 * R) / (2 * (| s | +1)))
-    
-
-    
+  
 	mpfr_set_si(counter2, K, GMP_RNDN);
 	mpfr_div_ui(counter2, counter2, v, GMP_RNDN);
 	mpfr_log(counter2, counter2, GMP_RNDN); // log( K/v )
@@ -211,7 +196,7 @@ void coefficientImagCalculator(mpfr_t t, int v, mpfr_t *coefficientImagValues,
 	mpfr_clear(Vmpfr);
 }
 
-void taylorSeries(mpfr_t sigma, mpfr_t t, int v, int k, int M1, int N, int numOfTerms,
+void taylorSeries(mpfr_t sigma, mpfr_t t, int k, int numOfTerms,
 					mpfr_t realTaylorSeries, mpfr_t imagTaylorSeries, 
 					mpfr_t *coefficientRealValues, mpfr_t *coefficientImagValues, int mpfr_bits) {
 	// initialize mpfr variables
@@ -261,7 +246,7 @@ void taylorSeries(mpfr_t sigma, mpfr_t t, int v, int k, int M1, int N, int numOf
 	Note that all of the places where there are comments for log( 1+ K/v ) we are actually using 
 	the taylor approximation of log( 1 + K/v ) calculated to a predetermined number of terms
 */
-void sumTerms(mpfr_t sigma, mpfr_t t, int v, int K, mpfr_t realTaylorSeries, 
+void sumTerms(mpfr_t sigma, mpfr_t t, mpfr_t realTaylorSeries, 
 					mpfr_t imagTaylorSeries, mpfr_t realTerm, mpfr_t imagTerm, int mpfr_bits) {
 	// initialize mpfr variables
 	mpfr_t counter, counter2;
@@ -322,9 +307,9 @@ void partialSum2MPFR(mpfr_t sigma, mpfr_t t, int M1, int N, mpfr_t rresult,
 
 	mpfr_t *coefficientRealValues;
 	mpfr_t *coefficientImagValues;
-	coefficientRealValues = new mpfr_t[25];
-	coefficientImagValues = new mpfr_t[25];
-	for (int i = 0; i < 25; i++) {
+	coefficientRealValues = new mpfr_t[100];
+	coefficientImagValues = new mpfr_t[100];
+	for (int i = 0; i < 100; i++) {
 		mpfr_init2(coefficientRealValues[i], mpfr_bits);
 		mpfr_init2(coefficientImagValues[i], mpfr_bits);
 	}
@@ -368,17 +353,15 @@ void partialSum2MPFR(mpfr_t sigma, mpfr_t t, int M1, int N, mpfr_t rresult,
 			i * exp( -sigma * log( 1 + k/v)  ) * sin( -t*log( 1 + k/v ) ) ]
 		*/
 		int K = endPartition(N, v, M1) - v + 1;
-		//cout << "K= " << K << endl;
-		//cout << "num of terms is " << numOfTerms(sigma, t, epsilon, v, M1, N, mpfr_bits) << endl;
 		for (int k = 0; k <= K - 1; k++) {
 			mpfr_set_ui(realTaylorSeries, 0, GMP_RNDN);
 			mpfr_set_ui(imagTaylorSeries, 0, GMP_RNDN);
 			mpfr_set_ui(realTerm, 0, GMP_RNDN);
 			mpfr_set_ui(imagTerm, 0, GMP_RNDN);
-			taylorSeries(sigma, t, v, k, M1, N, numberOfTerms, realTaylorSeries, imagTaylorSeries,
+			taylorSeries(sigma, t, k, numberOfTerms, realTaylorSeries, imagTaylorSeries,
 											coefficientRealValues, coefficientImagValues, mpfr_bits);
             
-            sumTerms(sigma, t, v, k, realTaylorSeries, imagTaylorSeries, realTerm, imagTerm, mpfr_bits);
+            sumTerms(sigma, t, realTaylorSeries, imagTaylorSeries, realTerm, imagTerm, mpfr_bits);
 			mpfr_add(counter, counter, realTerm, GMP_RNDN);
 			mpfr_add(counter2, counter2, imagTerm, GMP_RNDN);
 		}
@@ -412,12 +395,7 @@ void partialSum2MPFR(mpfr_t sigma, mpfr_t t, int M1, int N, mpfr_t rresult,
 	}
 	delete[] coefficientRealValues;
 	delete[] coefficientImagValues;
-	/*
-	mpfr_out_str(stdout, 10, mpfr_bits, rresult, GMP_RNDN);
-	cout << endl << "------------------" << endl;
-	mpfr_out_str(stdout, 10, mpfr_bits, iresult, GMP_RNDN);
-    cout << endl;
-	*/
+	
 	// clear mpfr variables
 	mpfr_clear(realTaylorSeries);
 	mpfr_clear(imagTaylorSeries);

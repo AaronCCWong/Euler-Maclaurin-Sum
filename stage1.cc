@@ -49,8 +49,6 @@ void partial_sum_mpfr(mpfr_t sigma, mpfr_t t, int M1, mpfr_t rresult, mpfr_t ire
     mpz_set_ui(end,M1-1);
 	mpfr_set_d(rsum, 0, GMP_RNDN);
 	mpfr_set_d(isum, 0, GMP_RNDN);
-	mpfr_set_d(rresult, 0, GMP_RNDN);
-	mpfr_set_d(iresult, 0, GMP_RNDN);
 
     while (mpz_cmp(end, n) >= 0) { // while M1-1>n for n starting at 1
         summand (sigma, t, n, rsum, isum,mpfr_bits); // n^(-s) where s=sigma+i*t
