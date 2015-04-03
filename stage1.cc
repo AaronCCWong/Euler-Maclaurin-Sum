@@ -1,4 +1,10 @@
-#include "stage1.h"
+/*
+    Calculates the Zeta function using stage 1 procedure:
+    \sum_{i=1}^{M1 - 1} \frac{1}{ n ^ { s } }
+*/
+#include "main.h"
+
+void summand (mpfr_t sigma, mpfr_t t, mpz_t n, mpfr_t rsum, mpfr_t isum, int mpfr_bits);
 
 int stage1() {
     return 0;

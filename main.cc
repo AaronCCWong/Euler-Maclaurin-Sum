@@ -1,10 +1,13 @@
-// program to compute values of partial dirichlet sum
-//
-//              \sum_{n=N}^{N+M-1} n^(-sigma+it)
-//
-// to within eps_rnd in roundoff error.
+/* 
+    program to compute values of partial dirichlet sum
 
-#include "stage1.h"
+              \sum_{n=N}^{N+M-1} n^(-sigma+it)
+
+    to within eps_rnd in roundoff error.
+*/
+
+#include "main.h"
+#include <time.h>
 
 // chooses when to stop stage 1 and begin stage 2
 int endStage1(mpfr_t sigma, mpfr_t t, int N, int precision);
@@ -12,6 +15,8 @@ int endStage1(mpfr_t sigma, mpfr_t t, int N, int precision);
 int numOfBits(mpfr_t sigma, mpfr_t epsilon, int N, int M1, int mpfr_bits);
 
 int main(int argc, char * argv[]) {
+    clock_t time;
+    
     string sigma_string = "";
     string t_string = "";
     string epsilon_string = "";
@@ -59,12 +64,13 @@ int main(int argc, char * argv[]) {
 				break;
         }
     }
+    time = clock();
     
 	// precision = ceiling(log(eps_rnd/(2*M*max(N^(-sigma),(N+M-1)^(-sigma)))))
 	// double mm1 = max(pow(Nd, -sigmad), pow(Nd + Md - 1, -sigmad));
 	// double mm2 = (abs(td) + abs(sigmad))*log(Nd + Md);
 	// precision = ceil(-log(eps_rnd / (2 * Md*mm1*mm2)) / log(2.));
-    int mpfr_bits = 500;
+    int mpfr_bits = 1000;
 
     mpfr_init2(t, mpfr_bits);
 	mpfr_init2(sigma, mpfr_bits);
@@ -106,6 +112,9 @@ int main(int argc, char * argv[]) {
     mpfr_clear(t);
     mpfr_clear(sigma);
     mpfr_clear(epsilon);
+    
+    time = clock() - time;
+    cout << "Program took " << ((float)time)/CLOCKS_PER_SEC << " seconds to run." << endl;
 
     return 0;
 }

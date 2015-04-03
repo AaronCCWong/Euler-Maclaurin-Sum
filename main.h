@@ -8,11 +8,10 @@
 
 using namespace std;
 
-int stage1();
-void summand (mpfr_t sigma, mpfr_t t, mpz_t n, mpfr_t rsum, mpfr_t isum, int mpfr_bits);
+// Call to stage 1
 void partial_sum_mpfr(mpfr_t sigma, mpfr_t t, int M1, mpfr_t rresult, mpfr_t iresult, int mpfr_bits);
 
-int stage2();
+// Call to stage 2
 void partialSum2MPFR(mpfr_t sigma, mpfr_t t, int M1, int N, mpfr_t rresult, mpfr_t iresult,
 						mpfr_t epsilon, int mpfr_bits);
 

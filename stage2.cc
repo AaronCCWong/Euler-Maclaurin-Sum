@@ -1,9 +1,4 @@
-#include <iostream>
-#include <cmath>
-#include <gmp.h>
-#include <mpfr.h>
-#include "stage1.h"
-using namespace std;
+#include "main.h"
 
 int numOfPartitions(int M1, int N);
 int endPartition(int N, int v, int M1);
@@ -14,9 +9,11 @@ void coefficientRealCalculator(mpfr_t sigma, int v, mpfr_t *coefficientImagValue
 // Calculates the coefficients of the imaginary part of our taylor expansion
 void coefficientImagCalculator(mpfr_t t, int v, mpfr_t *coefficientImagValues, 
 														int numOfTerms, int mpfr_bits);
+// Calculates the Taylor series
 void taylorSeries(mpfr_t sigma, mpfr_t t, int k, int numOfTerms,
 					mpfr_t realTaylorSeries, mpfr_t imagTaylorSeries, 
 					mpfr_t *coefficientRealValues, mpfr_t *coefficientImagValues, int mpfr_bits);
+// Calculates the terms of the partial sum
 void sumTerms(mpfr_t sigma, mpfr_t t, mpfr_t realTaylorSeries, mpfr_t imagTaylorSeries,
 				mpfr_t realTerm, mpfr_t imagTerm, int mpfr_bits);
 
@@ -255,7 +252,7 @@ void sumTerms(mpfr_t sigma, mpfr_t t, mpfr_t realTaylorSeries,
 	mpfr_set_d(counter, 0, GMP_RNDN);
 	mpfr_set_d(counter2, 0, GMP_RNDN);
 	/*
-		Real part of the term to be summed by partialSum2MPFR
+		Real part of the term to be summed by partialSum2MPFR:
 		exp( -sigma * log( 1 + K/v)  ) * cos( -t*log( 1 + K/v ) ) 
 	*/
 	mpfr_cos(counter, imagTaylorSeries, GMP_RNDN);
@@ -263,7 +260,7 @@ void sumTerms(mpfr_t sigma, mpfr_t t, mpfr_t realTaylorSeries,
 	mpfr_mul(counter, counter, counter2, GMP_RNDN);
 	mpfr_add(realTerm, realTerm, counter, GMP_RNDN);
 	/*
-		Imaginary part of the term to be summed by partialSum2MPFR
+		Imaginary part of the term to be summed by partialSum2MPFR:
 		exp( -sigma * log( 1 + K/v)  ) * sin( -t*log( 1 + K/v ) )
 	*/
 	mpfr_sin(counter, imagTaylorSeries, GMP_RNDN);
@@ -305,6 +302,7 @@ void partialSum2MPFR(mpfr_t sigma, mpfr_t t, int M1, int N, mpfr_t rresult,
 	mpfr_t imagTerm;
 	mpfr_init2(imagTerm, mpfr_bits);
 
+    // initialize array for mpfr variables
 	mpfr_t *coefficientRealValues;
 	mpfr_t *coefficientImagValues;
 	coefficientRealValues = new mpfr_t[100];
@@ -389,6 +387,7 @@ void partialSum2MPFR(mpfr_t sigma, mpfr_t t, int M1, int N, mpfr_t rresult,
 		// starting value of next partition
 		v = endPartition(N, v, M1) + 1;
 	}
+    // clear array of mpfr variables
 	for (int i = 0; i < 25; i++) {
 		mpfr_clear(coefficientRealValues[i]);
 		mpfr_clear(coefficientImagValues[i]);

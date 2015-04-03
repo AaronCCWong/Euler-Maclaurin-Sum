@@ -1,28 +1,9 @@
-#include <iostream>
-#include <gmp.h>
-#include <mpfr.h>
-using namespace std;
+#include "main.h"
 
 int inequalityOfL1(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, int mpfr_bits);
 int inequalityOfN(mpfr_t sigma, mpfr_t t, int L1, int mpfr_bits);
 
 int inequality() {
-	int mpfr_bits = 100;
-    mpfr_t epsilon;
-	mpfr_t sigma, t;
-	mpfr_init2(sigma, mpfr_bits);
-	mpfr_init2(t, mpfr_bits);
-    mpfr_init2(epsilon, mpfr_bits);
-	mpfr_set_d(sigma, 0.5, GMP_RNDN);
-	mpfr_set_d(t, 10000000, GMP_RNDN);
-    mpfr_set_d(epsilon, 1E-20, GMP_RNDN);
-
-	int L1 = inequalityOfL1(sigma, t, epsilon, mpfr_bits);
-	int N = inequalityOfN(sigma, t, L1, mpfr_bits);
-	cout << L1 << "--------" << N;
-
-	mpfr_clear(sigma);
-	mpfr_clear(t);
 	return 0;
 }
 
@@ -30,15 +11,13 @@ int inequalityOfL1(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, int mpfr_bits) {
 	int L1(1); // L1 that will be returned to be used as endSum of Euler-Maclaurin remainder
 	// initialize mpfr variables
 	mpfr_t Lmpfr;
-	mpfr_t counter, counter2, counter3, epsmpfr;
+	mpfr_t counter, counter2, counter3;
 	mpfr_init2(counter, mpfr_bits);
 	mpfr_init2(counter2, mpfr_bits);
 	mpfr_init2(counter3, mpfr_bits);
 	mpfr_init2(Lmpfr, mpfr_bits);
-	mpfr_init2(epsmpfr, mpfr_bits);
 	mpfr_set_si(Lmpfr, 1, GMP_RNDN);
 	mpfr_set_si(counter, 0, GMP_RNDN);
-	mpfr_set(epsmpfr, epsilon, GMP_RNDN);
 	/*
 		When s = (0,0) and L1 = 1, the term on the right hand side of the inequality is
 		equal to 11.51 so we assume this is the smallest value as to where the while loop
@@ -57,7 +36,6 @@ int inequalityOfL1(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, int mpfr_bits) {
 		mpfr_sub_ui(counter, counter, 1, GMP_RNDN);
 		/*
 		0.5 * log|s + 2*L1 - 1| - log( epsilon )
-
 		*/
 		mpfr_mul_si(counter2, Lmpfr, 2, GMP_RNDN);
 		mpfr_sub_ui(counter2, counter2, 1, GMP_RNDN);
@@ -68,7 +46,7 @@ int inequalityOfL1(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, int mpfr_bits) {
 		mpfr_sqrt(counter2, counter2, GMP_RNDN); // sqrt((sigma + 2L1 -1)^2 + t^2)
 		mpfr_log(counter2, counter2, GMP_RNDN); // log(sqrt((sigma + 2L1 -1)^2 + t^2))
 		mpfr_mul_d(counter2, counter2, 0.5, GMP_RNDN);
-		mpfr_log(counter3, epsmpfr, GMP_RNDN);
+		mpfr_log(counter3, epsilon, GMP_RNDN);
 		mpfr_sub(counter2, counter2, counter3, GMP_RNDN);
 	}
 	L1 = mpfr_get_si(Lmpfr, GMP_RNDN); // convert Lmpfr to an integer

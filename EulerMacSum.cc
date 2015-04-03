@@ -1,59 +1,15 @@
-//
-// Calculates the Euler-Maclaurin sum remainder terms
-//
+/*
+    Calculates the Euler-Maclaurin sum remainder terms
+*/
 
-#include "stage1.h"
+#include "main.h"
 #include "Misc.h"
 
-using namespace std;
-
-int EMSum()
-{
-	int mpfr_bits(300);
-	// initialize and set mpfr variables
-	mpfr_t sigma, t, rresult, iresult, epsilon;
-	mpfr_init2(sigma, mpfr_bits);
-	mpfr_init2(t, mpfr_bits);
-    mpfr_init2(epsilon, mpfr_bits);
-	mpfr_init2(rresult, mpfr_bits);
-	mpfr_init2(iresult, mpfr_bits);
-	mpfr_set_d(sigma, 0.5, GMP_RNDN);
-	mpfr_set_d(t, 1000000, GMP_RNDN);
-    mpfr_set_d(epsilon, 1E-80, GMP_RNDN);
-	mpfr_set_d(rresult, 0, GMP_RNDN);
-	mpfr_set_d(iresult, 0, GMP_RNDN);
-
-	int L1 = inequalityOfL1(sigma, t, epsilon, mpfr_bits);
-	int N = inequalityOfN(sigma, t, L1, mpfr_bits);
-
-	cout << "L1:" << L1 << endl;
-	cout << "N:" << N << endl;
-
-	// calculates the remainder terms
-	EMsum(sigma, t, N, L1, rresult, iresult, mpfr_bits);
-
-	cout << endl;
-	cout << "The real parts are:";
-	cout << endl;
-	mpfr_out_str(stdout, 10, mpfr_bits, rresult, GMP_RNDN);
-
-	cout << endl;
-	cout << "The imaginary parts are:";
-	cout << endl;
-	mpfr_out_str(stdout, 10, mpfr_bits, iresult, GMP_RNDN);
-	cout << endl;
-
-	// clear mpfr variables
-	mpfr_clear(sigma);
-	mpfr_clear(t);
-	mpfr_clear(rresult);
-	mpfr_clear(iresult);
-	mpfr_clear(epsilon);
-
-	return 0;
+int EMSum() {
+    return 0;
 }
 
-// Calculates the Euler-Maclaurin sum remainder from n=1 to N-1
+// Calculates the Euler-Maclaurin sum remainder
 void EMsum(mpfr_t sigma, mpfr_t t, int N, int L1, mpfr_t rresult, mpfr_t iresult, int mpfr_bits) {
 	mpfr_t Nmpfr, L1mpfr, l, l1, counter, token, token2, token3, token4, token5, token6, token7, token8, token9, endprod;
 	mpfr_t bnum, bden, bernoulli, token10, token11;
@@ -198,7 +154,7 @@ void EMsum(mpfr_t sigma, mpfr_t t, int N, int L1, mpfr_t rresult, mpfr_t iresult
 		}
 
 		mpfr_set_si(l, 1, GMP_RNDN);
-
+        // multiplication of complex numbers
 		mpfr_mul(token5, counter, token, GMP_RNDN);
 		mpfr_mul(token6, token9, token2, GMP_RNDN);
 		mpfr_sub(token5, token5, token6, GMP_RNDN);
