@@ -3,7 +3,7 @@
 */
 
 #include "main.h"
-#include "Misc.h"
+#include "misc.h"
 
 int EMSum() {
     return 0;
