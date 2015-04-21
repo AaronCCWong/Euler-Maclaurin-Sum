@@ -4,12 +4,8 @@
  * version of Stirling's formula to estimate.
  * We assume sigma > 0.
  */
-
-#include <iostream>
-#include <gmp.h>
-#include <mpfr.h>
 #include "misc.h"
-using namespace std;
+#include "zeros.h"
 
 int endSum(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, int mpfr_bits);
 void argument(mpfr_t sigma, mpfr_t t, mpfr_t arg);
@@ -235,4 +231,10 @@ void thirdTerm(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, mpfr_t logGammaReal, mpfr
     mpfr_clear(imagPowerOfS);
     mpfr_clear(counter1);
     mpfr_clear(counter2);
+}
+
+void logGamma(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, mpfr_t logGammaReal, mpfr_t logGammaImag, int mpfr_bits) {
+	firstTerm(sigma, t, logGammaReal, logGammaImag, mpfr_bits);
+	secondTerm(sigma, t, logGammaReal, logGammaImag, mpfr_bits);
+	thirdTerm(sigma, t, epsilon, logGammaReal, logGammaImag, mpfr_bits);
 }
