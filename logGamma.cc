@@ -14,26 +14,36 @@ void firstTerm(mpfr_t sigma, mpfr_t t, mpfr_t logGammaReal, mpfr_t logGammaImag,
 void secondTerm(mpfr_t sigma, mpfr_t t, mpfr_t logGammaReal, mpfr_t logGammaImag, int mpfr_bits);
 void thirdTerm(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, mpfr_t logGammaReal, mpfr_t logGammaImag, int mpfr_bits);
 
-int main() {
+int loggamma() {
     // determines number of bits the answer will have
     int mpfr_bits = 300;
     // initialize mpfr variables
     mpfr_t sigma, t, epsilon, logGammaReal, logGammaImag;
-    mpfr_init(sigma,mpfr_bits);
-    mpfr_init(t,mpfr_bits);
-    mpfr_init(epsilon, mpfr_bits);
-    mpfr_init(logGammaReal, mpfr_bits);
-    mpfr_init(logGammaImag, mpfr_bits);
+    mpfr_init2(sigma,mpfr_bits);
+    mpfr_init2(t,mpfr_bits);
+    mpfr_init2(epsilon, mpfr_bits);
+    mpfr_init2(logGammaReal, mpfr_bits);
+    mpfr_init2(logGammaImag, mpfr_bits);
     mpfr_set_d(sigma, 0.5, GMP_RNDN); // sigma
     mpfr_set_ui(t, 1000000, GMP_RNDN); // t
     mpfr_set_d(epsilon, 1E-80, GMP_RNDN); // epsilon
     mpfr_set_ui(logGammaReal, 0, GMP_RNDN);
-    mpfr_set_ui(logGammaImage, 0, GMP_RNDN);
+    mpfr_set_ui(logGammaImag, 0, GMP_RNDN);
+    
+    // cout << endSum(sigma, t, epsilon, mpfr_bits) << endl;
+    logGamma(sigma, t, epsilon, logGammaReal, logGammaImag, mpfr_bits);
+    cout << endl;
+    mpfr_out_str(stdout, 10, mpfr_bits, logGammaReal, GMP_RNDN);
+    cout << endl << "******************" << endl;
+    mpfr_out_str(stdout, 10, mpfr_bits, logGammaImag, GMP_RNDN);
+    cout << endl;
     
     // clear mprf variables
     mpfr_clear(sigma);
     mpfr_clear(t);
 	mpfr_clear(epsilon);
+    mpfr_clear(logGammaReal);
+    mpfr_clear(logGammaImag);
     
     return 0;
 }
@@ -44,18 +54,21 @@ int main() {
 int endSum(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, int mpfr_bits) {
     int m = 0;
     int arrIndex;
-    mpfr_t remainder bnum, bden, bernoulli;
+    mpfr_t remainder, bnum, bden, bernoulli;
     mpfr_t counter1,counter2;
-    mpfr_init(remainder, mpfr_bits);
-    mpfr_init(bnum, mpfr_bits);
-    mpfr_init(bden, mpfr_bits);
-    mpfr_init(bernoulli, mpfr_bits);
-    mpfr_init(counter1, mpfr_bits);
-    mpfr_init(counter2, mpfr_bits);
+    mpfr_init2(remainder, mpfr_bits);
+    mpfr_init2(bnum, mpfr_bits);
+    mpfr_init2(bden, mpfr_bits);
+    mpfr_init2(bernoulli, mpfr_bits);
+    mpfr_init2(counter1, mpfr_bits);
+    mpfr_init2(counter2, mpfr_bits);
     mpfr_set_ui(remainder, 1000, GMP_RNDN); // set to a number clearly larger than epsilon
     mpfr_set_ui(counter1, 0, GMP_RNDN);
     mpfr_set_ui(counter2, 0, GMP_RNDN);
-    while (mpfr_cmp_d(remainder, epsilon) > 0) {
+    mpfr_set_ui(bnum, 0, GMP_RNDN);
+    mpfr_set_ui(bden, 0, GMP_RNDN);
+    mpfr_set_ui(bernoulli, 0, GMP_RNDN);
+    while (mpfr_cmp(remainder, epsilon) > 0) {
         m++;
         arrIndex = m;
         mpfr_set_z(bnum, numerator_arr[arrIndex].get_mpz_t(), GMP_RNDN);
@@ -98,11 +111,16 @@ void argument(mpfr_t sigma, mpfr_t t, mpfr_t arg) {
 void firstTerm(mpfr_t sigma, mpfr_t t, mpfr_t logGammaReal, mpfr_t logGammaImag, int mpfr_bits) {
     mpfr_t realPart, imagPart;
     mpfr_t counter1,counter2, counter3;
-    mpfr_init(realPart, mpfr_bits);
-    mpfr_init(imagPart, mpfr_bits);
-    mpfr_init(counter, mpfr_bits);
-    mfpr_set(realPart, sigma, GMP_RNDN);
+    mpfr_init2(realPart, mpfr_bits);
+    mpfr_init2(imagPart, mpfr_bits);
+    mpfr_init2(counter1, mpfr_bits);
+    mpfr_init2(counter2, mpfr_bits);
+    mpfr_init2(counter3, mpfr_bits);
+    mpfr_set(realPart, sigma, GMP_RNDN);
     mpfr_set(imagPart, t, GMP_RNDN);
+    mpfr_set_ui(counter1, 0, GMP_RNDN);
+    mpfr_set_ui(counter2, 0, GMP_RNDN);
+    mpfr_set_ui(counter3, 0, GMP_RNDN);
     /*
      * First we calculate log(s)
      */
@@ -127,7 +145,7 @@ void firstTerm(mpfr_t sigma, mpfr_t t, mpfr_t logGammaReal, mpfr_t logGammaImag,
     // imag part
     mpfr_mul(counter1, counter1, t, GMP_RNDN);
     mpfr_mul(counter3, realPart, imagPart, GMP_RNDN);
-    mpfr_ad(counter3, counter3, counter1, GMP_RNDN);
+    mpfr_add(counter3, counter3, counter1, GMP_RNDN);
     // set result to real and imaginary parts
     mpfr_add(logGammaReal, logGammaReal, counter2, GMP_RNDN);
     mpfr_add(logGammaImag, logGammaImag, counter3, GMP_RNDN);
@@ -145,7 +163,7 @@ void firstTerm(mpfr_t sigma, mpfr_t t, mpfr_t logGammaReal, mpfr_t logGammaImag,
  */
 void secondTerm(mpfr_t sigma, mpfr_t t, mpfr_t logGammaReal, mpfr_t logGammaImag, int mpfr_bits) {
     mpfr_t pi;
-    mpfr_init(pi, mpfr_bits);
+    mpfr_init2(pi, mpfr_bits);
     mpfr_const_pi(pi, GMP_RNDN); // pi
     // updates logGamma
     mpfr_sub(logGammaReal, logGammaReal, sigma, GMP_RNDN);
@@ -164,15 +182,17 @@ void secondTerm(mpfr_t sigma, mpfr_t t, mpfr_t logGammaReal, mpfr_t logGammaImag
  */
 void powerOfS(mpfr_t sigma, mpfr_t t, int power, mpfr_t realPower, mpfr_t imagPower, int mpfr_bits) {
     mpfr_t counter1, counter2;
-    mpfr_init(counter1, mpfr_bits);
-    mpfr_init(counter2, mpfr_bits);
+    mpfr_init2(counter1, mpfr_bits);
+    mpfr_init2(counter2, mpfr_bits);
+    mpfr_set_ui(counter1, 0, GMP_RNDN);
+    mpfr_set_ui(counter2, 0, GMP_RNDN);
     mpfr_set(realPower, sigma, GMP_RNDN);
     mpfr_set(imagPower, t, GMP_RNDN);
     for (int i = 1; i < power; i++) {
         // real part
         mpfr_mul(counter1, realPower, sigma, GMP_RNDN);
         mpfr_mul(counter2, imagPower, t, GMP_RNDN);
-        mpfr_sub(counter1, counter2, GMP_RNDN);
+        mpfr_sub(counter1, counter1, counter2, GMP_RNDN);
         // imag part
         mpfr_mul(counter2, imagPower, sigma, GMP_RNDN);
         mpfr_mul(counter2, realPower, t, GMP_RNDN);
@@ -191,25 +211,32 @@ void powerOfS(mpfr_t sigma, mpfr_t t, int power, mpfr_t realPower, mpfr_t imagPo
  * \sum_{k = 1}^{m} s^{1-2k} * (2k)^{-1} * (2k-1)^{-1} * B_{2k}
  */
 void thirdTerm(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, mpfr_t logGammaReal, mpfr_t logGammaImag, int mpfr_bits) {
-    int endSum = endSum(sigma, t, epsilon, mpfr_bits);
+    int m = endSum(sigma, t, epsilon, mpfr_bits);
     int arrIndex;
     mpfr_t realPowerOfS, imagPowerOfS, bnum, bden, bernoulli;
     mpfr_t counter1, counter2;
-    mpfr_init(realPowerOfS, mpfr_bits);
-    mpfr_init(imagPowerOfS, mpfr_bits);
-    mpfr_init(counter1, mpfr_bits);
-    mpfr_init(counter2, mpfr_bits);
+    mpfr_init2(realPowerOfS, mpfr_bits);
+    mpfr_init2(imagPowerOfS, mpfr_bits);
+    mpfr_init2(bnum, mpfr_bits);
+    mpfr_init2(bden, mpfr_bits);
+    mpfr_init2(bernoulli, mpfr_bits);
+    mpfr_init2(counter1, mpfr_bits);
+    mpfr_init2(counter2, mpfr_bits);
+    mpfr_set_ui(realPowerOfS, 0, GMP_RNDN);
+    mpfr_set_ui(imagPowerOfS, 0, GMP_RNDN);
+    mpfr_set_ui(counter1, 0, GMP_RNDN);
+    mpfr_set_ui(counter2, 0, GMP_RNDN);
     /*
      * After calling powerOfS, we multiply by the conjugate to break up the real and imaginary
      * parts of the sum.
      */
-    for (int k = 1; i <= m; i++) {
+    for (int k = 1; k <= m; k++) {
         arrIndex = k - 1;
         mpfr_set_z(bnum, numerator_arr[arrIndex].get_mpz_t(), GMP_RNDN);
         mpfr_set_z(bden, denominator_arr[arrIndex].get_mpz_t(), GMP_RNDN);
         mpfr_div(bernoulli, bnum, bden, GMP_RNDN); // B_{2k}
         mpfr_div_ui(bernoulli, bernoulli, 2*k, GMP_RNDN);
-        mprf_div_ui(bernoulli, bernoulli, (2*k)-1, GMP_RNDN);
+        mpfr_div_ui(bernoulli, bernoulli, (2*k)-1, GMP_RNDN);
         powerOfS(sigma, t, (2*k)-1, realPowerOfS, imagPowerOfS, mpfr_bits);
         // real part of sum
         mpfr_mul(counter1, realPowerOfS, realPowerOfS, GMP_RNDN);

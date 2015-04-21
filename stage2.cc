@@ -388,7 +388,7 @@ void partialSum2MPFR(mpfr_t sigma, mpfr_t t, int M1, int N, mpfr_t rresult,
 		v = endPartition(N, v, M1) + 1;
 	}
     // clear array of mpfr variables
-	for (int i = 0; i < 25; i++) {
+	for (int i = 0; i < 100; i++) {
 		mpfr_clear(coefficientRealValues[i]);
 		mpfr_clear(coefficientImagValues[i]);
 	}

@@ -3,19 +3,21 @@
  */
 #include "zeros.h"
 
+void argumentPi(mpfr_t t, mpfr_t argPi, int mpfr_bits);
+
 int main()
 {
 	// determines number of bits the answer will have
 	int mpfr_bits = 300;
 	// initialize mpfr variables
 	mpfr_t sigma, t, epsilon, argPi, logGammaReal, logGammaImag, theta;
-	mpfr_init(sigma, mpfr_bits);
-	mpfr_init(t, mpfr_bits);
-	mpfr_init(epsilon, mpfr_bits);
-	mpfr_init(argPi, mpfr_bits);
-	mpfr_init(logGammaReal, mpfr_bits);
-	mpfr_init(logGammaImag, mpfr_bits);
-	mpfr_init(theta, mpfr_bits);
+	mpfr_init2(sigma, mpfr_bits);
+	mpfr_init2(t, mpfr_bits);
+	mpfr_init2(epsilon, mpfr_bits);
+	mpfr_init2(argPi, mpfr_bits);
+	mpfr_init2(logGammaReal, mpfr_bits);
+	mpfr_init2(logGammaImag, mpfr_bits);
+	mpfr_init2(theta, mpfr_bits);
 	mpfr_set_d(sigma, 0.5, GMP_RNDN); // sigma
 	mpfr_set_ui(t, 1000000, GMP_RNDN); // t
 	mpfr_set_d(epsilon, 1E-80, GMP_RNDN); // epsilon
@@ -41,31 +43,20 @@ int main()
 }
 
 /*
- * Calculates the argument of \pi^{-it/2} using the formula:
- *				ArcTan[ -Sin( t/2 * log\pi ) / Cos( t/2 * log\pi ) ]
+ * Calculates the argument of \pi^{-it/2}:
+ *            \pi^{-it/2} = e ^ { -i * \frac{t * log (\pi)}{2} }
+ * where the argument is given by
+ *              \frac{t * log (\pi)}{2}.
  */
 void argumentPi(mpfr_t t, mpfr_t argPi, int mpfr_bits) {
-	mpfr_t pi, counter1;
-	mpfr_init(counter1, mpfr_bits);
-	mpfr_init(pi, GMP_RNDN);
-	mpfr_const_pi(pi, GMP_RNDN);
-	mpfr_set_ui(counter1, 0, GMP_RNDN);
-	
-	// calculates cos( t/2 * log\pi )
-	mpfr_div_ui(counter1, t, 2, GMP_RNDN);
-	mpfr_log(argPi, pi, GMP_RNDN);
-	mpfr_mul(counter1, counter1, argPi, GMP_RNDN);
-	mpfr_cos(counter1, counter1, GMP_RNDN);
-	// calculates -sin( t/2 * log\pi )
-	mpfr_mul(argPi, argPi, t, GMP_RNDN);
-	mpfr_div_ui(argPi, argPi, 2, GMP_RNDN);
-	mpfr_sin(argPi, argPi, GMP_RNDN);
-	mpfr_mul_si(argPi, argPi, -1, GMP_RNDN);
-
-	mpfr_div(counter1, argPi, counter1, GMP_RNDN);
-	mpfr_atan(argPi, counter1, GMP_RNDN);
+	mpfr_t pi_holder;
+	mpfr_init2(pi_holder, mpfr_bits);
+	mpfr_const_pi(pi_holder, GMP_RNDN);
+    
+    mpfr_log(argPi, pi_holder, GMP_RNDN);
+    mpfr_mul(argPi, argPi, t, GMP_RNDN);
+    mpfr_div_ui(argPi, argPi, 2, GMP_RNDN);
 
 	// clear mpfr variables
-	mpfr_clear(pi);
-	mpfr_clear(counter1)
+	mpfr_clear(pi_holder);
 }
