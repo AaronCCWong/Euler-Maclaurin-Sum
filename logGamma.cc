@@ -37,6 +37,7 @@ int main() {
     // clear mprf variables
     mpfr_clear(sigma);
     mpfr_clear(t);
+	mpfr_clear(epsilon);
     
     return 0;
 }
