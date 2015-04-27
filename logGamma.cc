@@ -24,8 +24,8 @@ int main() {
     mpfr_init2(epsilon, mpfr_bits);
     mpfr_init2(logGammaReal, mpfr_bits);
     mpfr_init2(logGammaImag, mpfr_bits);
-    mpfr_set_d(sigma, 1/2, GMP_RNDN); // sigma
-    mpfr_set_ui(t, 1000, GMP_RNDN); // t
+    mpfr_set_d(sigma, 1, GMP_RNDN); // sigma
+    mpfr_set_ui(t, 1000000, GMP_RNDN); // t
     mpfr_set_d(epsilon, 1E-80, GMP_RNDN); // epsilon
     mpfr_set_ui(logGammaReal, 0, GMP_RNDN);
     mpfr_set_ui(logGammaImag, 0, GMP_RNDN);
@@ -38,7 +38,7 @@ int main() {
     mpfr_init2(imagPower, mpfr_bits);
     mpfr_set_ui(realPower, 0, GMP_RNDN); // t
     mpfr_set_ui(imagPower, 0, GMP_RNDN); // t
-    powerOfS(sigma,t,1,realPower, imagPower, mpfr_bits);
+    powerOfS(sigma,t,2,realPower, imagPower, mpfr_bits);
     /*cout << endl;
     mpfr_out_str(stdout, 10, mpfr_bits, logGammaReal, GMP_RNDN);
     cout << endl << "******************" << endl;
@@ -189,11 +189,13 @@ void secondTerm(mpfr_t sigma, mpfr_t t, mpfr_t logGammaReal, mpfr_t logGammaImag
  * Calcualtes s ^ power
  */
 void powerOfS(mpfr_t sigma, mpfr_t t, int power, mpfr_t realPower, mpfr_t imagPower, int mpfr_bits) {
-    mpfr_t counter1, counter2;
+    mpfr_t counter1, counter2, counter3;
     mpfr_init2(counter1, mpfr_bits);
     mpfr_init2(counter2, mpfr_bits);
+    mpfr_init2(counter3, mpfr_bits);
     mpfr_set_ui(counter1, 0, GMP_RNDN);
     mpfr_set_ui(counter2, 0, GMP_RNDN);
+    mpfr_set_ui(counter3, 0, GMP_RNDN);
     mpfr_set(realPower, sigma, GMP_RNDN);
     mpfr_set(imagPower, t, GMP_RNDN);
     for (int i = 1; i < power; i++) {
@@ -203,7 +205,8 @@ void powerOfS(mpfr_t sigma, mpfr_t t, int power, mpfr_t realPower, mpfr_t imagPo
         mpfr_sub(counter1, counter1, counter2, GMP_RNDN);
         // imag part
         mpfr_mul(counter2, imagPower, sigma, GMP_RNDN);
-        mpfr_mul(counter2, realPower, t, GMP_RNDN);
+        mpfr_mul(counter3, realPower, t, GMP_RNDN);
+        mpfr_add(counter2, counter2, counter3, GMP_RNDN);
         // updates realPower and imagPower
         mpfr_set(realPower, counter1, GMP_RNDN);
         mpfr_set(imagPower, counter2, GMP_RNDN);
@@ -214,9 +217,12 @@ void powerOfS(mpfr_t sigma, mpfr_t t, int power, mpfr_t realPower, mpfr_t imagPo
     mpfr_out_str(stdout, 10, mpfr_bits, imagPower, GMP_RNDN);
     cout << endl;
     
+    
+    
     // clear mpfr variables
     mpfr_clear(counter1);
     mpfr_clear(counter2);
+    mpfr_clear(counter3);
 }
 
 /*
