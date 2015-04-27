@@ -9,6 +9,7 @@
 using namespace std;
 
 // Call to stage 1
+int endStage1(mpfr_t sigma, mpfr_t t, int N, int mpfr_bits);
 void partial_sum_mpfr(mpfr_t sigma, mpfr_t t, int M1, mpfr_t rresult, mpfr_t iresult, int mpfr_bits);
 
 // Call to stage 2

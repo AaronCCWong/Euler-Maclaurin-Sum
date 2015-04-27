@@ -14,7 +14,7 @@ void firstTerm(mpfr_t sigma, mpfr_t t, mpfr_t logGammaReal, mpfr_t logGammaImag,
 void secondTerm(mpfr_t sigma, mpfr_t t, mpfr_t logGammaReal, mpfr_t logGammaImag, int mpfr_bits);
 void thirdTerm(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, mpfr_t logGammaReal, mpfr_t logGammaImag, int mpfr_bits);
 
-int loggamma() {
+int main() {
     // determines number of bits the answer will have
     int mpfr_bits = 300;
     // initialize mpfr variables
@@ -24,19 +24,26 @@ int loggamma() {
     mpfr_init2(epsilon, mpfr_bits);
     mpfr_init2(logGammaReal, mpfr_bits);
     mpfr_init2(logGammaImag, mpfr_bits);
-    mpfr_set_d(sigma, 0.5, GMP_RNDN); // sigma
-    mpfr_set_ui(t, 1000000, GMP_RNDN); // t
+    mpfr_set_d(sigma, 1/2, GMP_RNDN); // sigma
+    mpfr_set_ui(t, 1000, GMP_RNDN); // t
     mpfr_set_d(epsilon, 1E-80, GMP_RNDN); // epsilon
     mpfr_set_ui(logGammaReal, 0, GMP_RNDN);
     mpfr_set_ui(logGammaImag, 0, GMP_RNDN);
     
-    // cout << endSum(sigma, t, epsilon, mpfr_bits) << endl;
-    logGamma(sigma, t, epsilon, logGammaReal, logGammaImag, mpfr_bits);
-    cout << endl;
+    //cout << endSum(sigma, t, epsilon, mpfr_bits) << endl;
+    //logGamma(sigma, t, epsilon, logGammaReal, logGammaImag, mpfr_bits);
+    
+    mpfr_t realPower, imagPower;
+    mpfr_init2(realPower, mpfr_bits);
+    mpfr_init2(imagPower, mpfr_bits);
+    mpfr_set_ui(realPower, 0, GMP_RNDN); // t
+    mpfr_set_ui(imagPower, 0, GMP_RNDN); // t
+    powerOfS(sigma,t,1,realPower, imagPower, mpfr_bits);
+    /*cout << endl;
     mpfr_out_str(stdout, 10, mpfr_bits, logGammaReal, GMP_RNDN);
     cout << endl << "******************" << endl;
     mpfr_out_str(stdout, 10, mpfr_bits, logGammaImag, GMP_RNDN);
-    cout << endl;
+    cout << endl;*/
     
     // clear mprf variables
     mpfr_clear(sigma);
@@ -168,6 +175,7 @@ void secondTerm(mpfr_t sigma, mpfr_t t, mpfr_t logGammaReal, mpfr_t logGammaImag
     // updates logGamma
     mpfr_sub(logGammaReal, logGammaReal, sigma, GMP_RNDN);
     mpfr_sub(logGammaImag, logGammaImag, t, GMP_RNDN);
+    mpfr_mul_ui(pi,pi,2,GMP_RNDN);
     mpfr_log(pi, pi, GMP_RNDN);
     mpfr_div_ui(pi, pi, 2, GMP_RNDN);
     // updates logGamma
@@ -200,6 +208,11 @@ void powerOfS(mpfr_t sigma, mpfr_t t, int power, mpfr_t realPower, mpfr_t imagPo
         mpfr_set(realPower, counter1, GMP_RNDN);
         mpfr_set(imagPower, counter2, GMP_RNDN);
     }
+    
+    mpfr_out_str(stdout, 10, mpfr_bits, realPower, GMP_RNDN);
+    cout << endl << "******************" << endl;
+    mpfr_out_str(stdout, 10, mpfr_bits, imagPower, GMP_RNDN);
+    cout << endl;
     
     // clear mpfr variables
     mpfr_clear(counter1);
@@ -237,7 +250,7 @@ void thirdTerm(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, mpfr_t logGammaReal, mpfr
         mpfr_div(bernoulli, bnum, bden, GMP_RNDN); // B_{2k}
         mpfr_div_ui(bernoulli, bernoulli, 2*k, GMP_RNDN);
         mpfr_div_ui(bernoulli, bernoulli, (2*k)-1, GMP_RNDN);
-        powerOfS(sigma, t, (2*k)-1, realPowerOfS, imagPowerOfS, mpfr_bits);
+        powerOfS(sigma, t, 1-(2*k), realPowerOfS, imagPowerOfS, mpfr_bits);
         // real part of sum
         mpfr_mul(counter1, realPowerOfS, realPowerOfS, GMP_RNDN);
         mpfr_mul(counter2, imagPowerOfS, imagPowerOfS, GMP_RNDN);

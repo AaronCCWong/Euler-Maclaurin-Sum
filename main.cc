@@ -9,8 +9,6 @@
 #include "main.h"
 #include <time.h>
 
-// chooses when to stop stage 1 and begin stage 2
-int endStage1(mpfr_t sigma, mpfr_t t, int N, int precision);
 // chooses the number of bits to use in stage1 and stage 2
 int numOfBits(mpfr_t sigma, mpfr_t epsilon, int N, int M1, int mpfr_bits);
 
@@ -69,6 +67,7 @@ int main(int argc, char * argv[]) {
 	// precision = ceiling(log(eps_rnd/(2*M*max(N^(-sigma),(N+M-1)^(-sigma)))))
 	// double mm1 = max(pow(Nd, -sigmad), pow(Nd + Md - 1, -sigmad));
 	// double mm2 = (abs(td) + abs(sigmad))*log(Nd + Md);
+    
 	// precision = ceil(-log(eps_rnd / (2 * Md*mm1*mm2)) / log(2.));
     int mpfr_bits = 1000;
 
