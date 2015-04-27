@@ -1,10 +1,16 @@
 #include "main.h"
 #include "zeros.h"
 
+void valueCalc(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, mpfr_t theta,
+          mpfr_t zetaReal, mpfr_t zetaImag, mpfr_t value, int mpfr_bits);
+void zeroSearch(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, mpfr_t theta,
+           mpfr_t zetaReal, mpfr_t zetaImag, mpfr_t beginInterval,
+           mpfr_t endInterval, mpfr_t zero, int mpfr_bits);
+
 int main(int argc, char * argv[])
 {
   int mpfr_bits = 300;
-  mpfr_t sigma, t, value, zero;
+  mpfr_t sigma, t, value, zero, epsilon, zetaReal, zetaImag;
   mpfr_t theta, beginInterval, endInterval;
   mpfr_init2(sigma, mpfr_bits);
   mpfr_init2(t, mpfr_bits);
@@ -13,9 +19,15 @@ int main(int argc, char * argv[])
   mpfr_init2(endInterval, mpfr_bits);
   mpfr_init2(value, mpfr_bits);
   mpfr_init2(zero, mpfr_bits);
+    mpfr_init2(zetaReal, mpfr_bits);
+    mpfr_init2(zetaImag, mpfr_bits);
+     mpfr_init2(epsilon, mpfr_bits);
   mpfr_set_d(theta, 0, GMP_RNDN);
   mpfr_set_d(value, 0, GMP_RNDN);
   mpfr_set_d(zero, 0, GMP_RNDN);
+    mpfr_set_d(zetaReal, 0, GMP_RNDN);
+    mpfr_set_d(zetaImag, 0, GMP_RNDN);
+       mpfr_set_d(epsilon, 0, GMP_RNDN);
 
   string begin_string = "";
   string end_string = "";
@@ -100,6 +112,7 @@ void valueCalc(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, mpfr_t theta,
   int M1 = endStage1(sigma, t, N, mpfr_bits);
   partial_sum_mpfr(sigma, t, M1, zetaReal, zetaImag, mpfr_bits);
   partialSum2MPFR(sigma, t, M1, N, zetaReal, zetaImag, epsilon, mpfr_bits);
+    EMsum(sigma, t, N, L1, zetaReal, zetaImag,mpfr_bits);
 
   mpfr_mul(counter1, value, zetaReal, GMP_RNDN);
   mpfr_mul(counter2, valueImag, zetaImag, GMP_RNDN);
@@ -135,6 +148,9 @@ void zeroSearch(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, mpfr_t theta,
   int M1 = endStage1(sigma, t, N, mpfr_bits);
   partial_sum_mpfr(sigma, t, M1, zetaReal, zetaImag, mpfr_bits);
   partialSum2MPFR(sigma, t, M1, N, zetaReal, zetaImag, epsilon, mpfr_bits);
+    EMsum(sigma, t, N, L1, zetaReal, zetaImag,mpfr_bits);
+    
+    bool flag = true;
   while(flag) {
     valueCalc(sigma, intervalHalf, epsilon, theta, zetaReal, zetaImag, counter1, mpfr_bits);
     valueCalc(sigma, beginInterval, epsilon, theta, zetaReal, zetaImag, counter2, mpfr_bits);

@@ -1,3 +1,6 @@
+#ifndef MAIN_H
+#define MAIN_H
+
 #include <iostream>
 #include <cstdlib>
 #include <getopt.h>
@@ -22,3 +25,5 @@ int inequalityOfL1(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, int mpfr_bits);
 
 // Calculates the remainder terms of the Euler-Maclaurin sum
 void EMsum(mpfr_t sigma, mpfr_t t, int N, int L1, mpfr_t rresult, mpfr_t iresult, int mpfr_bits);
+
+#endif MAIN_H

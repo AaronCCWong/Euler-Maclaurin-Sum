@@ -12,7 +12,7 @@
 // chooses the number of bits to use in stage1 and stage 2
 int numOfBits(mpfr_t sigma, mpfr_t epsilon, int N, int M1, int mpfr_bits);
 
-int main(int argc, char * argv[]) {
+int mainer(int argc, char * argv[]) {
     clock_t time;
     
     string sigma_string = "";

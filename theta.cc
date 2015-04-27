@@ -5,18 +5,23 @@
 
 void argumentPi(mpfr_t t, mpfr_t argPi, int mpfr_bits);
 
-int main()
+int theta()
 {
 	// determines number of bits the answer will have
 	int mpfr_bits = 300;
 	// initialize mpfr variables
-    mpfr_t sigma, t, epsilon;
+    mpfr_t sigma, t, epsilon, theta;
 	mpfr_init2(sigma, mpfr_bits);
 	mpfr_init2(t, mpfr_bits);
 	mpfr_init2(epsilon, mpfr_bits);
-	mpfr_set_d(sigma, 1/4, GMP_RNDN); // sigma
-	mpfr_set_d(t, 1000000/2, GMP_RNDN); // t
+    mpfr_init2(theta, mpfr_bits);
+	mpfr_set_d(sigma, .5, GMP_RNDN); // sigma
+	mpfr_set_d(t, 1000000, GMP_RNDN); // t
 	mpfr_set_d(epsilon, 1E-80, GMP_RNDN); // epsilon
+    mpfr_set_d(theta, 0, GMP_RNDN);
+    
+    
+    calcTheta(sigma, t, epsilon, theta, mpfr_bits);
 
 	// clear mpfr variables
 	mpfr_clear(sigma);
@@ -39,7 +44,7 @@ void argumentPi(mpfr_t t, mpfr_t argPi, int mpfr_bits) {
     
     mpfr_log(argPi, pi_holder, GMP_RNDN);
     mpfr_mul(argPi, argPi, t, GMP_RNDN);
-    mpfr_div_ui(argPi, argPi, 2, GMP_RNDN);
+    mpfr_div_si(argPi, argPi, -2, GMP_RNDN);
 
 	// clear mpfr variables
 	mpfr_clear(pi_holder);
@@ -56,10 +61,19 @@ void calcTheta(mpfr_t sigma, mpfr_t t, mpfr_t epsilon, mpfr_t theta, int mpfr_bi
     mpfr_set_d(argPi, 0, GMP_RNDN);
     mpfr_set_d(logGammaReal, 0, GMP_RNDN);
     mpfr_set_d(logGammaImag, 0, GMP_RNDN);
+    
 
+    mpfr_div_ui(sigma, sigma, 2, GMP_RNDN);
     argumentPi(t, argPi, mpfr_bits);
+    mpfr_div_ui(t, t, 2, GMP_RNDN);
+
     logGamma(sigma, t, epsilon, logGammaReal, logGammaImag, mpfr_bits);
     mpfr_add(theta, logGammaImag, argPi, GMP_RNDN);
+    
+    
+    cout << endl;
+    mpfr_out_str(stdout, 10, mpfr_bits, theta, GMP_RNDN);
+    cout << "            " << endl;
     
     // clear mpfr variables
     mpfr_clear(argPi);
