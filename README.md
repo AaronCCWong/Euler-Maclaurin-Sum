@@ -8,4 +8,4 @@ Files currently being modified to include a way to find the zeros of the zeta fu
 The following is a brief explanation of how the calculations of the Riemann-Zeta
 Function are being done.
 
-![Image of Explanation](http://i.imgur.com/yJIiG6m.png)
+![Image of Explanation](http://i.imgur.com/1sBMsXT.png)
